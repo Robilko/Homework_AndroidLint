@@ -12,15 +12,8 @@ import org.jetbrains.uast.getContainingUClass
 import org.jetbrains.uast.kotlin.KotlinUBinaryExpression
 import ru.otus.homework.lintchecks.hasArtifact
 import ru.otus.homework.lintchecks.hasParent
-import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.ASYNC
-import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.BRIEF
-import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.COROUTINE_CONTEXT
-import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.COROUTINE_SCOPE
+import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.BRIEF_DESCRIPTION
 import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.ISSUE
-import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.JOB
-import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.LAUNCH
-import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.NON_CANCELABLE
-import ru.otus.homework.lintchecks.job_builder.JobInBuilderIssue.SUPERVISOR_JOB
 
 @Suppress("UnstableApiUsage")
 class JobInBuilderDetector : Detector(), Detector.UastScanner {
@@ -45,7 +38,7 @@ class JobInBuilderDetector : Detector(), Detector.UastScanner {
                     issue = ISSUE,
                     scope = node,
                     location = context.getLocation(arg),
-                    message = BRIEF,
+                    message = BRIEF_DESCRIPTION,
                     quickfixData = createFix(context, arg, node)
                 )
             }
@@ -138,5 +131,15 @@ class JobInBuilderDetector : Detector(), Detector.UastScanner {
             null -> false
             else -> return isInAnotherCoroutine(parent)
         }
+    }
+
+    private companion object {
+        const val LAUNCH = "launch"
+        const val ASYNC = "async"
+        const val COROUTINE_SCOPE = "kotlinx.coroutines.CoroutineScope"
+        const val NON_CANCELABLE = "kotlinx.coroutines.NonCancellable"
+        const val SUPERVISOR_JOB = "kotlinx.coroutines.SupervisorJob"
+        const val COROUTINE_CONTEXT = "kotlin.coroutines.CoroutineContext"
+        const val JOB = "kotlinx.coroutines.Job"
     }
 }
